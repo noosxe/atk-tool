@@ -19,6 +19,16 @@ It is structured both as a reusable Go library that can be integrated into other
 
 ---
 
+## Supported Devices
+
+Currently, the following devices are supported out of the box:
+
+- **ATK A9 Plus**
+
+To request support for more devices, or to add them yourself, see the [Extending Supported Devices](#extending-supported-devices) section below.
+
+---
+
 ## Linux Setup (udev rules)
 
 Because this tool interacts with low-level USB HID interfaces (`hidraw`), your Linux user needs read/write permissions for the target device files. Create a udev rule to run the tool without `sudo`:
@@ -144,7 +154,31 @@ func main() {
 
 ## Extending Supported Devices
 
-Adding support for new models is straightforward. You can register custom models at runtime before calling scanning functions:
+Adding support for new models is straightforward. You can either register them at runtime or add them natively to the source registry.
+
+### 1. Adding Native Support (For Forks/PRs)
+
+If you have forked the repository and wish to add support natively for all CLI and library users, you can add your device definition directly to the `defaultRegistry` slice in [registry.go](file:///home/mechsoull/Projects/atk-tool/registry.go):
+
+```go
+var defaultRegistry = []DeviceDefinition{
+	// ... existing devices ...
+	{
+		Name:       "ATK F1 Extreme",
+		VendorID:   0x2bdf,                      // Vendor ID
+		ProductID:  0x0a0e,                      // Product ID
+		UsagePages: []uint16{0xFF02, 0xFF04},    // Raw communication usage pages
+		ReportID:   DefaultReportID,             // Command report ID (typically DefaultReportID)
+	},
+}
+```
+
+> [!NOTE]
+> If the new device uses a Vendor ID different from `373b` (the default ATK Vendor ID), you will also need to add a corresponding udev rule in your Linux setup to grant user permissions for it.
+
+### 2. Registering Devices at Runtime
+
+If you are using `atk-tool` as a library in your own project, you can register custom models at runtime before calling the scanning/enumeration functions:
 
 ```go
 import "github.com/noosxe/atk-tool"
@@ -152,10 +186,10 @@ import "github.com/noosxe/atk-tool"
 func init() {
 	atk.RegisterDevice(atk.DeviceDefinition{
 		Name:       "ATK F1 Extreme",
-		VendorID:   0x2bdf,                      // Example Vendor ID
-		ProductID:  0x0a0e,                      // Example Product ID
-		UsagePages: []uint16{0xFF02, 0xFF04},    // raw communication usage pages
-		ReportID:   0x08,                        // Command report ID
+		VendorID:   0x2bdf,
+		ProductID:  0x0a0e,
+		UsagePages: []uint16{0xFF02, 0xFF04},
+		ReportID:   0x08,
 	})
 }
 ```
