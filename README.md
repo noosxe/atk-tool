@@ -85,6 +85,72 @@ atk-tool status --json
 atk-tool status --device /dev/hidraw5
 ```
 
+### Shell Completions
+
+`atk-tool` supports generating autocompletion scripts for Bash, Zsh, Fish, and PowerShell.
+
+#### Bash
+
+This script depends on the `bash-completion` package. If it is not installed already, install it via your OS package manager.
+
+To load completions in your current shell session:
+```bash
+source <(atk-tool completion bash)
+```
+
+To load completions for every new session, execute once:
+*   **Linux**:
+    ```bash
+    atk-tool completion bash > /etc/bash_completion.d/atk-tool
+    ```
+*   **macOS**:
+    ```bash
+    atk-tool completion bash > $(brew --prefix)/etc/bash_completion.d/atk-tool
+    ```
+
+#### Zsh
+
+If shell completion is not already enabled in your environment, you will need to enable it. You can execute the following once:
+```zsh
+echo "autoload -U compinit; compinit" >> ~/.zshrc
+```
+
+To load completions in your current shell session:
+```zsh
+source <(atk-tool completion zsh)
+```
+
+To load completions for every new session, execute once:
+*   **Linux**:
+    ```zsh
+    atk-tool completion zsh > "${fpath[1]}/_atk-tool"
+    ```
+*   **macOS**:
+    ```zsh
+    atk-tool completion zsh > $(brew --prefix)/share/zsh/site-functions/_atk-tool
+    ```
+
+#### Fish
+
+To load completions in your current shell session:
+```fish
+atk-tool completion fish | source
+```
+
+To load completions for every new session, execute once:
+```fish
+atk-tool completion fish > ~/.config/fish/completions/atk-tool.fish
+```
+
+#### PowerShell
+
+To load completions in your current shell session:
+```powershell
+atk-tool completion powershell | Out-String | Invoke-Expression
+```
+
+To load completions for every new session, add the output of the command above to your PowerShell profile.
+
 ---
 
 ## Library Usage
