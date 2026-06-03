@@ -39,7 +39,7 @@ The [Enumerate()](file:///home/mechsoull/Projects/atk-tool/discovery.go#L10) fun
 - Because USB devices can expose multiple virtual interface paths for the same hardware device, the scanning logic tracks `seenPaths` to ensure each unique physical/logical interface path is returned exactly once.
 
 ### 4. CLI Fallback Query Logic
-When retrieving battery/voltage status without a target path:
+When retrieving battery/voltage/charging status without a target path:
 - The CLI lists all matching ATK devices.
 - It iterates through candidates, attempting to [Open()](file:///home/mechsoull/Projects/atk-tool/discovery.go#L50) and [QueryBattery()](file:///home/mechsoull/Projects/atk-tool/device.go#L50).
 - If one candidate fails (e.g., disconnected or busy), it gracefully logs the error internally, closes the handle, and proceeds to the next candidate to find an active connection.

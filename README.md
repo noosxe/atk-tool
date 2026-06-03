@@ -11,7 +11,7 @@ It is structured both as a reusable Go library that can be integrated into other
 
 ## Features
 
-- **Telemetry Queries:** Fetch battery charge percentage and current operating voltage.
+- **Telemetry Queries:** Fetch battery charge percentage, current operating voltage, and charging status (wired vs. wireless).
 - **Deduplication:** Merges multiple HID interface/endpoint paths into single logical devices.
 - **JSON Outputs:** Native structured JSON output formats for seamless scripting and dashboard integration.
 - **Highly Modular:** Centralized device registry for easy support expansion of additional models.
@@ -214,6 +214,7 @@ func main() {
 	fmt.Printf("Telemetry:\n")
 	fmt.Printf("  Battery level: %d%%\n", status.Percentage)
 	fmt.Printf("  Voltage:       %.3f V\n", status.Voltage)
+	fmt.Printf("  Charging:      %t\n", status.Charging)
 }
 ```
 
