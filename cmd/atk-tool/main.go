@@ -79,10 +79,10 @@ func handleList(jsonOut bool) {
 	}
 
 	fmt.Printf("Found %d supported ATK device(s):\n\n", len(devices))
-	fmt.Printf("%-20s %-25s %-12s %-12s %s\n", "Model", "Product Name", "Vendor ID", "Product ID", "Path")
+	fmt.Printf("%-25s %-25s %-12s %-12s %s\n", "Model", "Product Name", "Vendor ID", "Product ID", "Path")
 	fmt.Println("------------------------------------------------------------------------------------------------------------------")
 	for _, dev := range devices {
-		fmt.Printf("%-20s %-25s 0x%04X       0x%04X       %s\n",
+		fmt.Printf("%-25s %-25s 0x%04X       0x%04X       %s\n",
 			dev.ModelName,
 			dev.ProductName,
 			dev.VendorID,
@@ -92,55 +92,7 @@ func handleList(jsonOut bool) {
 	}
 }
 
-func handleStatus(devicePath string, jsonOut bool) {
-	devices, err := atk.Enumerate()
-	if err != nil {
-		handleError(err, jsonOut)
-		os.Exit(1)
-	}
-
-	if len(devices) == 0 {
-		if jsonOut {
-			printJSONError(fmt.Errorf("no connected ATK devices found"))
-		} else {
-			fmt.Fprintf(os.Stderr, "Error: No connected ATK devices found.\n")
-		}
-		os.Exit(1)
-	}
-
-	var target *atk.DeviceInfo
-	if devicePath != "" {
-		for _, dev := range devices {
-			if dev.Path == devicePath {
-				target = dev
-				break
-			}
-		}
-		if target == nil {
-			if jsonOut {
-				printJSONError(fmt.Errorf("device path %s not found", devicePath))
-			} else {
-				fmt.Fprintf(os.Stderr, "Error: Device path %s not found.\n", devicePath)
-			}
-			os.Exit(1)
-		}
-	} else {
-		target = devices[0]
-	}
-
-	dev, err := atk.Open(target)
-	if err != nil {
-		handleError(err, jsonOut)
-		os.Exit(1)
-	}
-	defer dev.Close()
-
-	batt, err := dev.QueryBattery()
-	if err != nil {
-		handleError(err, jsonOut)
-		os.Exit(1)
-	}
-
+func printStatus(target *atk.DeviceInfo, batt *atk.BatteryInfo, jsonOut bool) {
 	if jsonOut {
 		type statusResponse struct {
 			Device  *atk.DeviceInfo  `json:"device"`
@@ -159,6 +111,82 @@ func handleStatus(devicePath string, jsonOut bool) {
 	fmt.Printf("   Device Path: %s\n", target.Path)
 	fmt.Printf("   Battery:     %d%%\n", batt.Percentage)
 	fmt.Printf("   Voltage:     %.3f V\n", batt.Voltage)
+}
+
+func handleStatus(devicePath string, jsonOut bool) {
+	devices, err := atk.Enumerate()
+	if err != nil {
+		handleError(err, jsonOut)
+		os.Exit(1)
+	}
+
+	if len(devices) == 0 {
+		if jsonOut {
+			printJSONError(fmt.Errorf("no connected ATK devices found"))
+		} else {
+			fmt.Fprintf(os.Stderr, "Error: No connected ATK devices found.\n")
+		}
+		os.Exit(1)
+	}
+
+	if devicePath != "" {
+		var target *atk.DeviceInfo
+		for _, dev := range devices {
+			if dev.Path == devicePath {
+				target = dev
+				break
+			}
+		}
+		if target == nil {
+			if jsonOut {
+				printJSONError(fmt.Errorf("device path %s not found", devicePath))
+			} else {
+				fmt.Fprintf(os.Stderr, "Error: Device path %s not found.\n", devicePath)
+			}
+			os.Exit(1)
+		}
+
+		dev, err := atk.Open(target)
+		if err != nil {
+			handleError(err, jsonOut)
+			os.Exit(1)
+		}
+		defer dev.Close()
+
+		batt, err := dev.QueryBattery()
+		if err != nil {
+			handleError(err, jsonOut)
+			os.Exit(1)
+		}
+
+		printStatus(target, batt, jsonOut)
+		return
+	}
+
+	// Loop over all candidate devices and try querying battery status.
+	// If one fails or times out, try the next one.
+	var lastErr error
+	for _, candidate := range devices {
+		dev, err := atk.Open(candidate)
+		if err != nil {
+			lastErr = err
+			continue
+		}
+
+		batt, err := dev.QueryBattery()
+		dev.Close()
+		if err != nil {
+			lastErr = err
+			continue
+		}
+
+		printStatus(candidate, batt, jsonOut)
+		return
+	}
+
+	// If all candidates failed, print error and exit.
+	handleError(fmt.Errorf("all connected devices failed to query: %w", lastErr), jsonOut)
+	os.Exit(1)
 }
 
 func printJSONError(err error) {

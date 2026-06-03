@@ -23,7 +23,8 @@ It is structured both as a reusable Go library that can be integrated into other
 
 Currently, the following devices are supported out of the box:
 
-- **ATK A9 Plus**
+- **ATK A9 Plus** (Wired Connection)
+- **Nearlink Mouse Dongle** (Wireless Receiver)
 
 To request support for more devices, or to add them yourself, see the [Extending Supported Devices](#extending-supported-devices) section below.
 
