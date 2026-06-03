@@ -193,3 +193,9 @@ func init() {
 	})
 }
 ```
+
+---
+
+## Disclaimer
+
+This repository has been developed with the assistance of Generative AI tools. While effort is made to maintain code quality, correctness, and security, users are encouraged to test and verify code behavior before deploying in production environments.
