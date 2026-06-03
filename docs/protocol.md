@@ -53,7 +53,7 @@ After a write command is sent, the device replies with a 64-byte frame. For tele
 +---------------+---------------+-------------------+-----------------------+
 | Bytes 0 - 5   | Byte 6        | Byte 7            | Bytes 8 - 9           |
 +---------------+---------------+-------------------+-----------------------+
-| Header/Status | Battery %     | Padding / Reserved| Battery Voltage (mV)  |
+| Header/Status | Battery %     | Charging Status   | Battery Voltage (mV)  |
 | (6 bytes)     | (0 - 100)     | (1 byte)          | (Big-Endian uint16)   |
 +---------------+---------------+-------------------+-----------------------+
 ```
@@ -65,7 +65,14 @@ After a write command is sent, the device replies with a 64-byte frame. For tele
 - Type: `uint8`.
 - Value: `0` to `100` representing charge percentage.
 
-#### 2. Battery Voltage
+#### 2. Charging Status
+- Location: Byte index `7` (`inBuf[7]`).
+- Type: `uint8` / `bool`.
+- Value:
+  - `0x00`: Discharging (running wirelessly on battery)
+  - `0x01`: Charging (USB cable connected)
+
+#### 3. Battery Voltage
 - Location: Byte indices `8` and `9` (`inBuf[8]` and `inBuf[9]`).
 - Type: 16-bit Big-Endian Unsigned Integer.
 - Unit: Millivolts (mV).

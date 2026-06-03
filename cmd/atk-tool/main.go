@@ -109,7 +109,11 @@ func printStatus(target *atk.DeviceInfo, batt *atk.BatteryInfo, jsonOut bool) {
 
 	fmt.Printf("🔋 %s Status:\n", target.ModelName)
 	fmt.Printf("   Device Path: %s\n", target.Path)
-	fmt.Printf("   Battery:     %d%%\n", batt.Percentage)
+	if batt.Charging {
+		fmt.Printf("   Battery:     %d%% (Charging)\n", batt.Percentage)
+	} else {
+		fmt.Printf("   Battery:     %d%%\n", batt.Percentage)
+	}
 	fmt.Printf("   Voltage:     %.3f V\n", batt.Voltage)
 }
 

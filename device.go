@@ -7,10 +7,11 @@ import (
 	"github.com/sstallion/go-hid"
 )
 
-// BatteryInfo holds the parsed battery percentage and voltage.
+// BatteryInfo holds the parsed battery percentage, voltage, and charging state.
 type BatteryInfo struct {
 	Percentage uint8   `json:"percentage"`
 	Voltage    float32 `json:"voltage"`
+	Charging   bool    `json:"charging"`
 }
 
 // DeviceInfo represents details of a discovered ATK peripheral.
@@ -75,6 +76,9 @@ func (d *Device) QueryBattery() (*BatteryInfo, error) {
 	// Parse out battery percentage (index 6)
 	batteryPercent := inBuf[6]
 
+	// Parse out charging state (index 7). 0x01 means charging, 0x00 means discharging.
+	charging := inBuf[7] == 0x01
+
 	// Parse out battery voltage in millivolts (indices 8 & 9)
 	millivolts := (uint16(inBuf[8]) << 8) | uint16(inBuf[9])
 	voltage := float32(millivolts) / 1000.0
@@ -82,5 +86,6 @@ func (d *Device) QueryBattery() (*BatteryInfo, error) {
 	return &BatteryInfo{
 		Percentage: batteryPercent,
 		Voltage:    voltage,
+		Charging:   charging,
 	}, nil
 }
