@@ -27,6 +27,13 @@ var defaultRegistry = []DeviceDefinition{
 	{
 		Name:       "ATK A9 Plus",
 		VendorID:   0x373b,
+		ProductID:  0x1115,
+		UsagePages: []uint16{0xFF02, 0xFF04},
+		ReportID:   DefaultReportID,
+	},
+	{
+		Name:       "Nearlink Mouse Dongle",
+		VendorID:   0x373b,
 		ProductID:  0x10c9,
 		UsagePages: []uint16{0xFF02, 0xFF04},
 		ReportID:   DefaultReportID,
