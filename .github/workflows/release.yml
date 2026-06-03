@@ -38,7 +38,7 @@ jobs:
       - name: Build Binary
         run: |
           mkdir -p bin
-          go build -o bin/atk-tool-linux-${{ matrix.arch }} ./cmd/atk-tool
+          go build -ldflags "-s -w -X main.version=${{ github.ref_name }}" -o bin/atk-tool-linux-${{ matrix.arch }} ./cmd/atk-tool
 
       - name: Test
         run: go test -v -race ./...

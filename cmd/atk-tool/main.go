@@ -4,15 +4,30 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"runtime/debug"
 
 	"github.com/noosxe/atk-tool"
 	"github.com/spf13/cobra"
 )
 
 var (
-	jsonFlag   bool
-	deviceFlag string
+	jsonFlag    bool
+	deviceFlag  string
+	versionFlag bool
+	version     string
 )
+
+func getVersion() string {
+	if version != "" {
+		return version
+	}
+	if info, ok := debug.ReadBuildInfo(); ok {
+		if info.Main.Version != "" {
+			return info.Main.Version
+		}
+	}
+	return "unknown"
+}
 
 func main() {
 	var rootCmd = &cobra.Command{
@@ -20,15 +35,28 @@ func main() {
 		Short: "ATK Peripheral Utility",
 		Long:  `A command-line tool designed to interface with and query ATK peripherals.`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			if versionFlag {
+				fmt.Printf("atk-tool version %s\n", getVersion())
+				os.Exit(0)
+			}
+			if !cmd.HasParent() {
+				return nil
+			}
 			return atk.Init()
 		},
+		Run: func(cmd *cobra.Command, args []string) {
+			_ = cmd.Help()
+		},
 		PersistentPostRun: func(cmd *cobra.Command, args []string) {
-			_ = atk.Exit()
+			if cmd.HasParent() {
+				_ = atk.Exit()
+			}
 		},
 	}
 
-	// Global flag (available to all commands)
+	// Global flags (available to all commands)
 	rootCmd.PersistentFlags().BoolVar(&jsonFlag, "json", false, "Output in JSON format")
+	rootCmd.PersistentFlags().BoolVar(&versionFlag, "version", false, "Print the version and exit")
 
 	var listCmd = &cobra.Command{
 		Use:   "list",
