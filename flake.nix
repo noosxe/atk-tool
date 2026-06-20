@@ -39,7 +39,7 @@
           options.services.atk-tool.enable = lib.mkEnableOption "atk-tool HID configuration";
 
           config = lib.mkIf config.services.atk-tool.enable {
-            environment.systemPackages = [ self.packages.${pkgs.system}.default ];
+            environment.systemPackages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 
             services.udev.extraRules = ''
               SUBSYSTEM=="hidraw", ATTRS{idVendor}=="373b", TAG+="uaccess"
