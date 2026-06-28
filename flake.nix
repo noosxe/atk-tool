@@ -42,7 +42,7 @@
             environment.systemPackages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 
             services.udev.extraRules = ''
-              SUBSYSTEM=="hidraw", ATTRS{idVendor}=="373b", TAG+="uaccess"
+              SUBSYSTEM=="hidraw", ATTRS{idVendor}=="373b", ENV{ID_INPUT}="1", TAG+="uaccess"
             '';
           };
         };
