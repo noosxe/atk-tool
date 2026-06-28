@@ -41,9 +41,16 @@
           config = lib.mkIf config.services.atk-tool.enable {
             environment.systemPackages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 
-            services.udev.extraRules = ''
-              SUBSYSTEM=="hidraw", ATTRS{idVendor}=="373b", TAG+="uaccess"
-            '';
+            services.udev.packages = [
+              (pkgs.writeTextFile {
+                name = "hidraw-uaccess-rule";
+                destination = "/etc/udev/rules.d/70-atk-tool-hidraw-uaccess.rules";
+                text = ''
+                  # Ensure uaccess is applied before 73-seat-late.rules
+                  SUBSYSTEM=="hidraw", ATTRS{idVendor}=="373b", TAG+="uaccess"
+                '';
+              })
+            ];
           };
         };
 
