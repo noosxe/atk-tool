@@ -22,8 +22,10 @@ It is structured both as a reusable Go library that can be integrated into other
 
 Currently, the following devices are supported out of the box:
 
-- **ATK A9 Plus** (Wired Connection)
-- **Nearlink Mouse Dongle** (Wireless Receiver)
+- **ATK A9 Plus** — `373b:1115` (Wired Connection)
+- **Nearlink Mouse Dongle** — `373b:10c9` (Wireless Receiver)
+
+You can check the `vendor:product` ID of your own devices with `lsusb` (`373b` is ATK's vendor ID).
 
 To request support for more devices, or to add them yourself, see the [Extending Supported Devices](#extending-supported-devices) section below.
 
