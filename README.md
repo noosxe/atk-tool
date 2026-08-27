@@ -224,7 +224,7 @@ func main() {
 
 Adding support for new models is straightforward. You can either register them at runtime or add them natively to the source registry.
 
-### 1. Adding Native Support (For Forks/PRs)
+### 1. Adding Native Support (For Forks)
 
 If you have forked the repository and wish to add support natively for all CLI and library users, you can add your device definition directly to the `defaultRegistry` slice in [registry.go](file:///home/mechsoull/Projects/atk-tool/registry.go):
 
@@ -261,6 +261,16 @@ func init() {
 	})
 }
 ```
+
+---
+
+## Contributing
+
+Thank you for your interest in this project! **Contributions are not accepted at this moment.**
+
+This means pull requests, feature requests, and additions to the device registry will not be merged, regardless of scope. Bugs and unexpected behavior reports are still welcome via the issue tracker.
+
+You are very welcome to **fork** the repository and extend it for your own devices — the [MIT License](LICENSE) explicitly permits use, modification, and redistribution. For devices not covered by the default registry, see the [Extending Supported Devices](#extending-supported-devices) section for runtime registration, or fork and edit the registry directly.
 
 ---
 
