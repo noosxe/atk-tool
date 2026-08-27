@@ -113,6 +113,9 @@ go build -v ./...
 
 # Run the test suite
 go test -v -race ./...
+
+# Run the linter (config in .golangci.yml; CI enforces the same)
+golangci-lint run
 ```
 
 Ensure native libraries (`libudev-dev` and `pkg-config`) are installed locally before executing standard Go toolchain commands.
