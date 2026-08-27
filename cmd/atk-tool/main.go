@@ -183,9 +183,7 @@ func handleStatus(devicePath string, jsonOut bool) {
 			handleError(err, jsonOut)
 			os.Exit(1)
 		}
-		defer dev.Close()
-
-		batt, err := dev.QueryBattery()
+		batt, err := queryAndClose(dev)
 		if err != nil {
 			handleError(err, jsonOut)
 			os.Exit(1)
@@ -205,8 +203,7 @@ func handleStatus(devicePath string, jsonOut bool) {
 			continue
 		}
 
-		batt, err := dev.QueryBattery()
-		dev.Close()
+		batt, err := queryAndClose(dev)
 		if err != nil {
 			lastErr = err
 			continue
@@ -233,4 +230,15 @@ func handleError(err error, jsonOut bool) {
 	} else {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 	}
+}
+
+// queryAndClose queries the battery status of the given device and ensures
+// the connection is closed before returning.
+func queryAndClose(dev *atk.Device) (*atk.BatteryInfo, error) {
+	defer func() {
+		if err := dev.Close(); err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: failed to close device: %v\n", err)
+		}
+	}()
+	return dev.QueryBattery()
 }

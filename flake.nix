@@ -66,6 +66,7 @@
               pkgs.gopls
               pkgs.udev
               pkgs.delve
+              pkgs.golangci-lint
             ];
 
             env = {

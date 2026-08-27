@@ -1,6 +1,5 @@
 # ATK Peripheral Tool
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/noosxe/atk-tool)](https://goreportcard.com/report/github.com/noosxe/atk-tool)
 [![Go Reference](https://pkg.go.dev/badge/github.com/noosxe/atk-tool.svg)](https://pkg.go.dev/github.com/noosxe/atk-tool)
 
 `atk-tool` is a modular Golang library and command-line utility for querying and interfacing with **ATK gaming peripherals** (focusing on mouse telemetry like battery status and voltage).
